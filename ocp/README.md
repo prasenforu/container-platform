@@ -16,7 +16,7 @@ apt-get update
 #### Install & start docker
 ```
 apt-get install -y docker.io
-apt-get install -y kubelet kubeadm kubectl kubernetes-cni
+#apt-get install -y kubelet kubeadm kubectl kubernetes-cni
 
 systemctl enable docker;systemctl start docker
 echo 'DOCKER_OPTS="--insecure-registry 172.30.0.0/16"' | sudo tee -a /etc/default/docker
@@ -41,8 +41,9 @@ oc cluster up --public-hostname=<EC2-PUBLIC-IP> --routing-suffix=<EC2-PUBLIC-IP>
 apt-get install apache2-utils
 htpasswd -cb /root/users.htpasswd admin admin2675
 ```
-###### After Installation all configuration stores in ```\var\lib\origin\openshift.local.config\```. 
-###### Edit ```master\master-config.yaml``` file as follows & mention ```users.htpasswd``` file location properly.
+###### After Installation all configuration stores in ```/var/lib/origin/openshift.local.config/master/```. 
+###### Edit ```master-config.yaml``` file as follows & mention ```users.htpasswd``` file location properly.
+
 ```
 identityProviders:
  - name: my_htpasswd_provider
@@ -54,6 +55,13 @@ identityProviders:
  kind: HTPasswdPasswordIdentityProvider
  file: /root/users.htpasswd
 ```
+
+```
+cd /var/lib/origin/openshift.local.config/master/
+cp master-config.yaml master-config.yaml_ori
+vi master-config.yaml
+```
+
 #### Restart Openshift Cluster
 ```
 oc cluster down
@@ -62,6 +70,18 @@ oc login -u system:admin
 oc adm policy add-cluster-role-to-user cluster-admin admin
 # Gives the default service account in the current project access to run as UID 0 (root)
 oc adm policy add-scc-to-user anyuid -z default
+```
+
+#### Installing Ansible
+
+```
+apt install python-minimal python3 -y
+apt-add-repository ppa:ansible/ansible
+
+apt-get update
+apt-get install ansible
+
+pip install six
 ```
 
 #### Troubleshotting
