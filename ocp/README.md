@@ -77,27 +77,30 @@ oc deploy docker-registry --retry
 #### Administration
 ```
 # To edit/view security in OCP
-oc edit scc privileged	
+	    oc edit scc privileged	
 
 # To give cluster-admin role to a user
 
-  --login as admin in openshift 
-  --Give cluster-admin role at the cluster scope
+  1. login as admin in openshift 
+  2. Give cluster-admin role at the cluster scope
 
-	    oadm policy add-cluster-role-to-user cluster-admin <user name> 
-	    oadm policy add-cluster-role-to-user cluster-admin pkar	-- for example
+	    oc adm policy add-cluster-role-to-user cluster-admin <user name> 
+	    oc adm policy add-cluster-role-to-user cluster-admin pkar	-- for example
 
 # Give privileged scc access to the user
 	
-	    oadm policy add-scc-to-user privileged <user name>
-	    oadm policy add-scc-to-user privileged pkar	-- for example
+	    oc adm policy add-scc-to-user privileged <user name>
+	    oc adm policy add-scc-to-user privileged pkar	-- for example
+	    
+# Run Container with root proviledge
 
+	    oc adm policy add-scc-to-user anyuid -z default
 # Others
-     oc login -u system:admin
-     oc whoami
-     oc whoami -t 
-     oc get nodes --show-labels=true
-     oc label node <nodename> <key>=<value>
-     oc adm policy add-scc-to-user anyuid -z default -n <namespace>
-     oc adm policy add-role-to-user admin <username> -n <namespace>
+      	    oc login -u system:admin
+     	    oc whoami
+     	    oc whoami -t 
+     	    oc get nodes --show-labels=true
+     	    oc label node <nodename> <key>=<value>
+     	    oc adm policy add-scc-to-user anyuid -z default -n <namespace>
+     	    oc adm policy add-role-to-user admin <username> -n <namespace>
 ```
