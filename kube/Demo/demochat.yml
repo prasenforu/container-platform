@@ -1,0 +1,76 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mongo
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: mongo
+    spec:
+      containers:
+      - image: mongo:latest
+        name: mongo
+        ports:
+        - containerPort: 27017
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: mongo
+  name: mongo
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+  selector:
+    name: mongo
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: demochat
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: demochat
+    spec:
+      containers:
+      - image: containers101/demochat:2.0
+        imagePullPolicy: IfNotPresent
+        name: demochat
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: demochat
+  name: demochat
+spec:
+  ports:
+  - port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    name: demochat
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    k8s-app: chatapp
+  name: chatapp
+spec:
+  rules:
+    - host: chatapp.52.65.121.36.nip.io
+      http:
+        paths:
+          - backend:
+              serviceName: demochat
+              servicePort: 5000
