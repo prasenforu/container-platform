@@ -26,12 +26,6 @@ systemctl restart docker
 
 #### Download oc client
 ```
-# wget https://github.com/openshift/origin/releases/download/v3.6.0-rc.0/openshift-origin-client-tools-v3.6.0-rc.0-98b3d56-linux-64bit.tar.gz
-# tar zxvf openshift-origin-client-tools-v3.6.0-rc.0-98b3d56-linux-64bit.tar.gz
-# mv openshift-origin-client-tools-v3.6.0-rc.0-98b3d56-linux-64bit ocp-3.6
-# cp ocp-3.6/oc /usr/local/bin/oc_36
-
-
 wget https://github.com/openshift/origin/releases/download/v1.5.0/openshift-origin-client-tools-v1.5.0-031cbe4-linux-64bit.tar.gz
 tar zxvf openshift-origin-client-tools-v1.5.0-031cbe4-linux-64bit.tar.gz
 mv openshift-origin-client-tools-v1.5.0-031cbe4-linux-64bit ocp
@@ -95,8 +89,6 @@ apt-get install ansible
 
 pip install six
 ```
-
-#### Ansible Service Broker Setup
 
 #### Troubleshotting
 
