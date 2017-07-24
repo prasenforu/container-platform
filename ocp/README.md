@@ -39,12 +39,33 @@ oc cluster up --public-hostname=<EC2-PUBLIC-IP> --routing-suffix=<EC2-PUBLIC-IP>
 #### Install HTPASSWORD enable for Openshift Cluster
 ```
 apt-get install apache2-utils
-htpasswd -cb users.htpasswd admin admin2675
+htpasswd -cb /root/users.htpasswd admin admin2675
+```
+###### After Installation all configuration stores in ```\var\lib\origin\openshift.local.config\```. 
+###### Edit ```master\master-config.yaml``` file as follows & mention ```users.htpasswd``` file location properly.
+```
+identityProviders:
+ - name: my_htpasswd_provider
+ challenge: true
+ login: true
+ mappingMethod: claim
+ provider:
+ apiVersion: v1
+ kind: HTPasswdPasswordIdentityProvider
+ file: /root/users.htpasswd
+```
+#### Restart Openshift Cluster
+```
+oc cluster down
+oc cluster up --public-hostname=<EC2-PUBLIC-IP> --routing-suffix=<EC2-PUBLIC-IP>.nip.io
 oc login -u system:admin
 oc adm policy add-cluster-role-to-user cluster-admin admin
+# Gives the default service account in the current project access to run as UID 0 (root)
 oc adm policy add-scc-to-user anyuid -z default
 ```
 
 #### Troubleshotting
+```
 oc deploy router --retry
 oc deploy docker-registry --retry
+```
