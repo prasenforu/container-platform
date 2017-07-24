@@ -65,6 +65,10 @@ oc adm policy add-scc-to-user anyuid -z default
 ```
 
 #### Troubleshotting
+
+##### Problem
+When you execute ```oc get pod``` in ```default``` namespace you will find that router and docker registry not running.
+To resolve the issue please execute followin commands.
 ```
 oc deploy router --retry
 oc deploy docker-registry --retry
