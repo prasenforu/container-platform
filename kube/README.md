@@ -5,7 +5,6 @@ This Quick Start reference deployment guide provides step-by-step instructions f
 
 ## Docker, Kubernetes & AWS Architecture
 
-- DNS: The host that contain Red Hat OpenShift control components, including the API server and the controller manager server. The master manages nodes in its Kubernetes
 - Master: The host that contain Kubernetes  control components, including the API server and the controller manager server. The master manages nodes in its Kubernetes cluster and schedules pods to run on nodes.
 - Hub: The host that contain Kubernetes Private registry, router. This server some people call as Infra Server. This server is important, we will point our wild card DNS “cloudapps.cloud-cafe.in” in godaddy.in in my domain configuration.
 - Node1 and Node2: Nodes provide the runtime environments for containers. Each node in a Kubernetes cluster has the required services to be managed by the master. Nodes also have the required services to run pods, including Docker, a kubelet and a service proxy. 
@@ -19,7 +18,8 @@ Before you deploy this Quick Start, we recommend that you become familiar with t
 - Amazon Elastic Compute Cloud (Amazon EC2)
 
 It is assumes that familiarity with PaaS concepts and Red Hat OpenShift. For more information, see the Red Hat OpenShift documentation.
-If you want to access publically your openshift then you need registered domain. Here I use my domain (cloud-café.in) which I purchase from godaddy.in
+
+In order to work properly Openshift require ```wild card DNS setup```. That you can setup with registered domain. Here I use my domain (cloud-café.in) which I purchase from godaddy.in
 
 
 ##### Step #4	Setup Security Group
