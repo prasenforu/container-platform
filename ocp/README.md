@@ -26,6 +26,12 @@ systemctl restart docker
 
 #### Download oc client
 ```
+# wget https://github.com/openshift/origin/releases/download/v3.6.0-rc.0/openshift-origin-client-tools-v3.6.0-rc.0-98b3d56-linux-64bit.tar.gz
+# tar zxvf openshift-origin-client-tools-v3.6.0-rc.0-98b3d56-linux-64bit.tar.gz
+# mv openshift-origin-client-tools-v3.6.0-rc.0-98b3d56-linux-64bit ocp-3.6
+# cp ocp-3.6/oc /usr/local/bin/oc_36
+
+
 wget https://github.com/openshift/origin/releases/download/v1.5.0/openshift-origin-client-tools-v1.5.0-031cbe4-linux-64bit.tar.gz
 tar zxvf openshift-origin-client-tools-v1.5.0-031cbe4-linux-64bit.tar.gz
 mv openshift-origin-client-tools-v1.5.0-031cbe4-linux-64bit ocp
@@ -34,7 +40,10 @@ cp ocp/oc /usr/local/bin/
 
 #### Start Openshift Cluster
 ```
-oc cluster up --public-hostname=<EC2-PUBLIC-IP> --routing-suffix=<EC2-PUBLIC-IP>.nip.io
+# oc cluster up --public-hostname=<EC2-PUBLIC-IP> --routing-suffix=<EC2-PUBLIC-IP>.nip.io
+metadata_endpoint="http://169.254.169.254/latest/meta-data"
+public_ip="$( curl "${metadata_endpoint}/public-ipv4" )"
+oc cluster up --public-hostname="${public_ip}" --routing-suffix="${public_ip}.nip.io"
 ```
 
 #### Install HTPASSWORD enable for Openshift Cluster
