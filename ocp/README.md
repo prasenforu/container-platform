@@ -1,4 +1,4 @@
-## OCP in AWS ubuntu single host
+## Openshift Origin in AWS ubuntu single host
 
 #### Download packages
 ```
