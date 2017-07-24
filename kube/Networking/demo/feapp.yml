@@ -1,0 +1,45 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  labels:
+  name: feapp
+spec:
+  rules:
+    - host: frontend.cloudapps.cloud-cafe.in
+      http:
+        paths:
+          - backend:
+              serviceName: feapp
+              servicePort: 80
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: feapp
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: feapp
+    spec:
+      containers:
+      - name: feapp-dc-pod
+        image: prasenforu/apache-php
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: feapp
+  labels:
+    name: feapp
+spec:
+  ports:
+  - name: 80-tcp
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    name: feapp

@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: dockstress
+  name: dockstress
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: dockstress
+    spec:
+      containers:
+      - image: prasenforu/dockstress
+        imagePullPolicy: IfNotPresent
+        name: dockstress
+      restartPolicy: Always

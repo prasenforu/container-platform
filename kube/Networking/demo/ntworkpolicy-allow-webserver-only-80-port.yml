@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: NetworkPolicy
+metadata:
+ name: allow-webserver-only-80-port
+ namespace: ns-demo1
+spec:
+ podSelector:
+  matchLabels:
+    name: feapp
+ ingress:
+  - ports:
+     - protocol: TCP
+       port: 80

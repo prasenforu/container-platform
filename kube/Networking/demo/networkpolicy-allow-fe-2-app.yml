@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: NetworkPolicy
+metadata:
+ name: allow-fe-2-app
+spec:
+ podSelector:
+  matchLabels:
+    name: myemp
+ ingress:
+  - from:
+     - podSelector:
+        matchLabels:
+         name: feapp

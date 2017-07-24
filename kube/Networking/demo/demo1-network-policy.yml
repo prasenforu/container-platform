@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: NetworkPolicy
+metadata:
+ name: demo1-network-policy
+ namespace: ns-demo1
+spec:
+ podSelector:
+  matchLabels:
+    user: demo1
+ ingress:
+  - from:
+     - namespaceSelector:
+        matchLabels:
+         user: demo1
+     - podSelector:
+        matchLabels:
+         user: demo1

@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    app: kibana
+  name: kibana-ingress
+  namespace: default
+spec:
+  rules:
+    - host: logging.cloudapps.cloud-cafe.in
+      http:
+        paths:
+          - backend:
+              serviceName: kibana
+              servicePort: 5601

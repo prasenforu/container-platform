@@ -1,0 +1,31 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: demo1-nginx
+  namespace: ns-demo1
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        user: demo1
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo1-nginx
+  namespace: ns-demo1
+  labels:
+    user: demo1
+spec:
+  selector:
+    app: nginx
+  ports:
+  - port: 80
