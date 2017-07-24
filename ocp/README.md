@@ -75,7 +75,9 @@ vi master-config.yaml
 #### Restart Openshift Cluster
 ```
 oc cluster down
-oc cluster up --public-hostname=<EC2-PUBLIC-IP> --routing-suffix=<EC2-PUBLIC-IP>.nip.io
+metadata_endpoint="http://169.254.169.254/latest/meta-data"
+public_ip="$( curl "${metadata_endpoint}/public-ipv4" )"
+oc cluster up --public-hostname="${public_ip}" --routing-suffix="${public_ip}.nip.io"
 oc login -u system:admin
 oc adm policy add-cluster-role-to-user cluster-admin admin
 # Gives the default service account in the current project access to run as UID 0 (root)
@@ -93,6 +95,8 @@ apt-get install ansible
 
 pip install six
 ```
+
+#### Ansible Service Broker Setup
 
 #### Troubleshotting
 
