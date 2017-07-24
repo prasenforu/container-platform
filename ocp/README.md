@@ -11,6 +11,7 @@ deb http://apt.kubernetes.io/ kubernetes-xenial main
 EOF
 
 apt-get update
+setenforce 0
 ```
 
 #### Install & start docker
