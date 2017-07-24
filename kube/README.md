@@ -1,4 +1,4 @@
-﻿# Container As A Service (CAAS) with Docker and Kubernetes
+﻿# Setup Kubernetes Cluster with kubeadm
 
 ## Overview
 This Quick Start reference deployment guide provides step-by-step instructions for deploying Docker and Kubernetes on the Amazon Web Services (AWS) cloud. 
@@ -8,8 +8,6 @@ This Quick Start reference deployment guide provides step-by-step instructions f
 - Master: The host that contain Kubernetes  control components, including the API server and the controller manager server. The master manages nodes in its Kubernetes cluster and schedules pods to run on nodes.
 - Hub: The host that contain Kubernetes Private registry, router. This server some people call as Infra Server. This server is important, we will point our wild card DNS “ec2-ip.nip.io”.
 - Node1 and Node2: Nodes provide the runtime environments for containers. Each node in a Kubernetes cluster has the required services to be managed by the master. Nodes also have the required services to run pods, including Docker, a kubelet and a service proxy. 
-
-image
 
 ## Prerequisites 
 Before you deploy this Quick Start, we recommend that you become familiar with the following AWS services. (If you are new to AWS, see Getting Started with AWS.)
@@ -72,27 +70,29 @@ kubeadm join --token 80e1cd.558bc0a0ca2d2007 <master private ip>:6443
 ```
 
 ### Now Setup Cluster properly for use
+
 ```
+git clone https://github.com/prasenforu/container-platform.git
+
 ## Flannel Network Setup
 
-kubectl create -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel-rbac.yml
-kubectl create -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+kubectl create -f container-platform/kube/Networking/rbac-canal.yml
+kubectl create -f container-platform/kube/Networking/canal.yml
 
 ## Kube Dashboard setup
 
-kubectl create -f https://git.io/kube-dashboard
+kubectl create -f container-platform/kube/Dashboard/kubernetes-dashboard.yml
 
 ## Setting nodes with labels
-
+oc get nodes
 kubectl label node <infra host ip> region="infra" zone="infranodes" --overwrite
-
 kubectl label node <node1 host ip> region="primary" zone="east" --overwrite
 kubectl label node <node2 host ip> region="primary" zone="west"
 
 ## Setting ingress 
 
-kubectl create -f default-backend.yaml
-kubectl create -f nginx-ingress-controller-rbac.yaml
+kubectl create -f container-platform/kube/Ingress/default-backend.yaml
+kubectl create -f container-platform/kube/Ingress/nginx-ingress-controller-RBAC.yml
 
 ```
 
