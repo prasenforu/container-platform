@@ -57,10 +57,10 @@ systemctl enable kubelet;systemctl start kubelet
 
 ### Install in master host
 ```
-#### Using CANAL CNI plugins
+# Using CANAL CNI plugins
 kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=<master private ip> | tee output.file
 
-#### Using CalicoL CNI plugins
+# Using CalicoL CNI plugins
 kubeadm init --pod-network-cidr=192.168.0.0/16 --apiserver-advertise-address=<master private ip> | tee output.file
 
 # Setup environment
@@ -78,10 +78,14 @@ kubeadm join --token 80e1cd.558bc0a0ca2d2007 <master private ip>:6443
 ```
 git clone https://github.com/prasenforu/container-platform.git
 
-## Flannel Network Setup
+## Network Setup with CANAL CNI
 
 kubectl create -f container-platform/kube/Networking/rbac-canal.yml
 kubectl create -f container-platform/kube/Networking/canal.yml
+
+## Network Setup with Calico CNI
+
+kubectl create -f container-platform/kube/Networking/calico.yaml
 
 ## Kube Dashboard setup
 
