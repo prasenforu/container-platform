@@ -57,7 +57,11 @@ systemctl enable kubelet;systemctl start kubelet
 
 ### Install in master host
 ```
+#### Using CANAL CNI plugins
 kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=<master private ip> | tee output.file
+
+#### Using CalicoL CNI plugins
+kubeadm init --pod-network-cidr=192.168.0.0/16 --apiserver-advertise-address=<master private ip> | tee output.file
 
 # Setup environment
 sudo cp /etc/kubernetes/admin.conf $HOME/
