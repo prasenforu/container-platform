@@ -99,7 +99,7 @@ kubectl label node <node2 host ip> region="primary" zone="west"
 
 ## Setting ingress 
 
-kubectl create -f container-platform/kube/Ingress/default-backend.yaml
+kubectl create -f container-platform/kube/Ingress/default-backend.yml
 kubectl create -f container-platform/kube/Ingress/nginx-ingress-controller-RBAC.yml
 
 ```
