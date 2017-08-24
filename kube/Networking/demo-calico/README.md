@@ -1,27 +1,30 @@
-# Kubernetes Network policy test
+# Calico policy test
 Before using Network Policy, we first verify that the pod is interoperable if it is not used. Here our test environment is this:
 
-- Namespace: ns-demo1, ns-demo2, ns-demo3
+- Namespace: allow3306, allow3307, denydball, test-db
 - Deployment: ns-demo1 / demo1-nginx, ns-demo2 / busybox, ns-demo3 / busybox
 - Service: ns-demo1 / demo1-nginx
 
 ### 1. First create Namespace:
 
 ```
-# kubectl create -f ns-demo1.yml
-namespace "ns-demo1" created
-# kubectl create -f ns-demo2.yml
-namespace "ns-demo2" created
-# kubectl create -f ns-demo3.yml
-namespace "ns-demo3" created
+# kubectl create ns allow3306 allow3307 denydball test-db
+
+# kubectl create ns allow3307
+
+# kubectl create ns denydball
+
+# kubectl create ns test-db
+
 # kubectl get ns
 NAME          STATUS    AGE
-default       Active    9d
-kube-public   Active    9d
-kube-system   Active    9d
-ns-demo1    Active    12s
-ns-demo2    Active    8s
-ns-demo3    Active    5s
+allow3306     Active    20h
+allow3307     Active    20h
+default       Active    2d
+denydball     Active    20h
+kube-public   Active    2d
+kube-system   Active    2d
+test-db       Active    1d
 ```
 ### 2. Create demo1-nginx deployment under namespace ```ns-demo1```
 
