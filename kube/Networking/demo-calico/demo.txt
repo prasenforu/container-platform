@@ -1,0 +1,108 @@
+kubectl exec -ti -n kube-system calicoctl -- /calicoctl apply -f - <<EOF
+- apiVersion: v1
+  kind: policy
+  metadata:
+    name: egress-allow-from-allow3306-to-external-db-3306
+  spec:
+    egress:
+    - action: allow
+      protocol: udp
+      destination:
+        selector: calico/k8s_ns == 'kube-system' && k8s-app=='kube-dns'
+        ports:
+        - 53
+    - action: allow
+      protocol: tcp
+      destination:
+        selector: calico/k8s_ns == 'test-db'
+        ports:
+        - 3306
+    - action: allow
+      protocol: tcp
+      destination:
+        net: 172.31.18.58/32
+        ports:
+        - 3306
+    order: 500
+    Selector: calico/k8s_ns == 'allow3306'
+- apiVersion: v1
+  kind: policy
+  metadata:
+    name: egress-allow-from-allow3307-to-external-db-3307
+  spec:
+    egress:
+    - action: allow
+      protocol: udp
+      destination:
+        selector: calico/k8s_ns == 'kube-system' && k8s-app=='kube-dns'
+        ports:
+        - 53
+    - action: allow
+      protocol: tcp
+      destination:
+        selector: calico/k8s_ns == 'test-db'
+        ports:
+        - 3306
+    - action: allow
+      protocol: tcp
+      destination:
+        net: 172.31.18.58/32
+        ports:
+        - 3307
+    order: 501
+    Selector: calico/k8s_ns == 'allow3307'
+EOF
+---------------------
+kubectl exec -ti -n kube-system calicoctl -- /calicoctl delete policy egress-allow-from-allow3306-to-external-db-3306
+kubectl exec -ti -n kube-system calicoctl -- /calicoctl delete policy egress-allow-from-allow3307-to-external-db-3307
+kubectl exec -ti -n kube-system calicoctl -- /calicoctl delete policy egress-deny-from-denydball-to-all-db
+---------------------
+kubectl exec -ti -n kube-system calicoctl -- /calicoctl get policy
+---------------------
+
+http://app-a-allow3307.cloudapps.cloud-cafe.in/connectdbout.php
+http://app-a-allow3307.cloudapps.cloud-cafe.in/connectdbout1.php
+http://app-a-allow3307.cloudapps.cloud-cafe.in/connectdbin.php
+
+http://app-b-allow3306.cloudapps.cloud-cafe.in/connectdbout.php
+http://app-b-allow3306.cloudapps.cloud-cafe.in/connectdbout1.php
+http://app-b-allow3306.cloudapps.cloud-cafe.in/connectdbin.php
+
+http://web-server.cloudapps.cloud-cafe.in/connectdbin.php
+http://web-server.cloudapps.cloud-cafe.in/connectdbout.php
+http://web-server.cloudapps.cloud-cafe.in/connectdbout1.php
+--------------
+kubectl exec -ti -n kube-system calicoctl -- /calicoctl apply -f - <<EOF
+- apiVersion: v1
+  kind: policy
+  metadata:
+    name: egress-deny-from-denydball-to-all-db
+  spec:
+    egress:
+    - action: allow
+      protocol: udp
+      destination:
+        selector: calico/k8s_ns == 'kube-system' && k8s-app=='kube-dns'
+        ports:
+        - 53
+    - action: deny
+      protocol: tcp
+      destination:
+        selector: calico/k8s_ns == 'test-db'
+        ports:
+        - 3306
+    - action: deny
+      protocol: tcp
+      destination:
+        net: 172.31.18.58/32
+        ports:
+        - 3307
+    - action: deny
+      protocol: tcp
+      destination:
+        net: 172.31.18.58/32
+        ports:
+        - 3306
+    order: 502
+    Selector: calico/k8s_ns == 'denydball'
+EOF

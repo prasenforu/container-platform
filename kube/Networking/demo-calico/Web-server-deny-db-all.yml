@@ -1,0 +1,49 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: web-server
+  namespace: denydball
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: web-server
+    spec:
+      containers:
+      - image: prasenforu/phpapp:4.0
+        imagePullPolicy: Always
+        name: web-server
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: web-server
+  name: web-server
+  namespace: denydball
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    name: web-server
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    k8s-app: web-server
+  name: web-server
+  namespace: denydball
+spec:
+  rules:
+    - host: web-server.cloudapps.cloud-cafe.in
+      http:
+        paths:
+          - backend:
+              serviceName: web-server
+              servicePort: 80

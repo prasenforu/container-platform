@@ -1,0 +1,49 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: app-a-allow3307
+  namespace: allow3307
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: app-a-allow3307
+    spec:
+      containers:
+      - image: prasenforu/phpapp:4.0
+        imagePullPolicy: Always
+        name: app-a-allow3307
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: app-a-allow3307
+  name: app-a-allow3307
+  namespace: allow3307
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    name: app-a-allow3307
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    k8s-app: app-a-allow3307
+  name: app-a-allow3307
+  namespace: allow3307
+spec:
+  rules:
+    - host: app-a-allow3307.cloudapps.cloud-cafe.in
+      http:
+        paths:
+          - backend:
+              serviceName: app-a-allow3307
+              servicePort: 80

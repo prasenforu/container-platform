@@ -1,0 +1,37 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: demodb
+  namespace: test-db
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: demodb
+    spec:
+      containers:
+      - image: romeoz/docker-mysql
+        imagePullPolicy: IfNotPresent
+        name: demodb
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_PASS
+          value: "mypassword"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: demodb
+  name: demodb
+  namespace: test-db
+spec:
+  clusterIP: 10.100.73.140
+  ports:
+  - port: 3306
+    protocol: TCP
+    targetPort: 3306
+  selector:
+    name: demodb
