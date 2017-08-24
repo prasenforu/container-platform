@@ -141,33 +141,63 @@ http://web-server.cloudapps.cloud-cafe.in/connectdbout1.php          -- As no po
 
 ```
 
-### 9. Now are are going to create another container in different namespace and create network policy to allow isolated namespace.
+### 9. Now are are going to block all db (internal & external) from Web Server, using below policy
 
 ```
-# oc create -f demo3-busybox.yml
-pod "demo3-busybox" created
-
-# kubectl exec -it demo3-busybox -n ns-demo3 -- wget --spider --timeout=1 demo1-nginx.ns-demo1
-Connecting to demo1-nginx.ns-demo1 (10.108.133.64:80)
-wget: download timed out
+kubectl exec -ti -n kube-system calicoctl -- /calicoctl apply -f - <<EOF
+- apiVersion: v1
+  kind: policy
+  metadata:
+    name: egress-deny-from-denydball-to-all-db
+  spec:
+    egress:
+    - action: allow
+      protocol: udp
+      destination:
+        selector: calico/k8s_ns == 'kube-system' && k8s-app=='kube-dns'
+        ports:
+        - 53
+    - action: deny
+      protocol: tcp
+      destination:
+        selector: calico/k8s_ns == 'test-db'
+        ports:
+        - 3306
+    - action: deny
+      protocol: tcp
+      destination:
+        net: 172.31.18.58/32
+        ports:
+        - 3307
+    - action: deny
+      protocol: tcp
+      destination:
+        net: 172.31.18.58/32
+        ports:
+        - 3306
+    order: 502
+    Selector: calico/k8s_ns == 'denydball'
+EOF
 ```
 
-As you can see its from different namespace so its not allowing to connect.
-
-Now applying network policy to allow connection from namespace ```ns-demo3``` to ```ns-demo1```
+### 10. At this time, now execute below URL, expected URL coming timout
 
 ```
-# kubectl create -f demo3-network-policy.yml
-networkpolicy "demo3-network-policy" created
-```
-Now its allowing connection from namespace ```ns-demo3``` to ```ns-demo1```
+http://web-server.cloudapps.cloud-cafe.in/connectdbin.php            -- it should fail (it will connect container DB)
+http://web-server.cloudapps.cloud-cafe.in/connectdbout.php           -- it should fail (it try to connect external DB on port 3306)
+http://web-server.cloudapps.cloud-cafe.in/connectdbout1.php          -- it should fail (it try to connect external DB on port 3307)
 
 ```
-# kubectl exec -it demo3-busybox -n ns-demo3 -- wget --spider --timeout=1 demo1-nginx.ns-demo1
-Connecting to demo1-nginx.ns-demo1 (10.108.133.64:80)
+#### Check list of policy
 ```
-
-So that we realized Kubernetes' network isolation. Based on Network Policy, you can implement a public cloud security group policy.
+kubectl exec -ti -n kube-system calicoctl -- /calicoctl get policy
+```
+#### Delete policys
+```
+kubectl exec -ti -n kube-system calicoctl -- /calicoctl delete policy egress-allow-from-allow3306-to-external-db-3306
+kubectl exec -ti -n kube-system calicoctl -- /calicoctl delete policy egress-allow-from-allow3307-to-external-db-3307
+kubectl exec -ti -n kube-system calicoctl -- /calicoctl delete policy egress-deny-from-denydball-to-all-db
+```
 
 #### At the end you can delete entire deployment
 
