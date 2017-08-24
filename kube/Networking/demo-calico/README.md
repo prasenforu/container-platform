@@ -1,5 +1,12 @@
 # Calico Policy Demo
-Before using check any Network Policy in used. Here our test environment is this:
+Before using check any Network Policy in used. & on host ```172.31.18.58``` MYSQL Database should run on port ```3306``` & ```3307```
+
+Here is command to run mysql database as a container on host ```172.31.18.58```
+
+```
+docker run --name mysqldb-3306 -d -p 3306:3306 -e 'MYSQL_PASS=mypassword' prasenforu/mysql-db:1.0
+docker run --name mysqldb-3307 -d -p 3307:3306 -e 'MYSQL_PASS=mypassword' prasenforu/mysql-db:1.0
+```
 
 - Namespace: ```allow3306, allow3307, denydball, test-db```
 - Deployment: ```demodb```, ```App-A-allow3307```, ```App-B-allow3306```, ```Web-server-deny-db-all```
