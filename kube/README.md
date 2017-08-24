@@ -85,7 +85,8 @@ kubectl create -f container-platform/kube/Networking/canal.yml
 
 ## Network Setup with Calico CNI
 
-kubectl create -f container-platform/kube/Networking/calico.yaml
+kubectl create -f container-platform/kube/Networking/calico.yml
+kubectl create -f container-platform/kube/Networking/calicoctl.yml        -- this will install calicoctl as a pod
 
 ## Kube Dashboard setup
 
