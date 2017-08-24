@@ -2,8 +2,7 @@
 Before using Network Policy, we first verify that the pod is interoperable if it is not used. Here our test environment is this:
 
 - Namespace: allow3306, allow3307, denydball, test-db
-- Deployment: ns-demo1 / demo1-nginx, ns-demo2 / busybox, ns-demo3 / busybox
-- Service: ns-demo1 / demo1-nginx
+- Deployment: demodb, App-A-allow3307, App-B-allow3306, Web-server-deny-db-all
 
 ### 1. First create Namespace:
 
@@ -26,121 +25,120 @@ kube-public   Active    2d
 kube-system   Active    2d
 test-db       Active    1d
 ```
-### 2. Create demo1-nginx deployment under namespace ```ns-demo1```
+### 2. Create demodb deployment under namespace ```test-db```
 
 ```
-# kubectl create -f deployment-demo1-nginx.yml
-deployment "demo1-nginx" created
-service "demo1-nginx" created
-# kubectl get svc -n ns-demo1
-NAME          CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
-demo1-nginx   10.108.133.64   <none>        80/TCP    41s
-# kubectl get pod -o wide -n ns-demo1
-NAME                           READY     STATUS    RESTARTS   AGE       IP            NODE
-demo1-nginx-3342339170-bnszn   1/1       Running   0          1m        10.244.1.31   kube-hub.cloud-cafe.in
-# kubectl create -f demo1-busybox-without-label.yml
-pod "demo1-busybox-without-labels" created
-# kubectl get pod -o wide -n ns-demo1
-NAME                           READY     STATUS    RESTARTS   AGE       IP            NODE
-demo1-busybox-without-labels   1/1       Running   0          32s       10.244.1.32   kube-hub.cloud-cafe.in
-demo1-nginx-3342339170-bnszn   1/1       Running   0          3m        10.244.1.31   kube-hub.cloud-cafe.in
+# kubectl create -f demodb.yml
 ```
-### 3. Create demo2-busybox pod under namespace ```ns-demo2```
+### 3. Create App-A-allow3307 deployment under namespace ```allow3307```
 
 ```
-# kubectl create -f demo2-busybox.yml
-pod "demo2-busybox" created
-# kubectl get pod -o wide -n ns-demo2
-NAME            READY     STATUS    RESTARTS   AGE       IP            NODE
-demo2-busybox   1/1       Running   0          6s        10.244.1.33   kube-hub.cloud-cafe.in
+# kubectl create -f App-A-allow3307.yml
 ```
-### 4. Test service has been installed, and now we board demo2-busybox to see if it can connect demo1-nginx, interconnect from different namespaces.
+### 4. Create App-B-allow3306 deployment under namespace ```allow3306```
 
 ```
-# kubectl exec -it demo2-busybox -n ns-demo2 -- wget --spider --timeout=1 demo1-nginx.ns-demo1
-Connecting to demo1-nginx.ns-demo1 (10.108.133.64:80)
-# kubectl exec -it demo1-busybox-without-labels ping 10.244.1.31 -n ns-demo1
-PING 10.244.1.31 (10.244.1.31): 56 data bytes
-64 bytes from 10.244.1.31: seq=0 ttl=63 time=0.109 ms
-64 bytes from 10.244.1.31: seq=1 ttl=63 time=0.071 ms
-64 bytes from 10.244.1.31: seq=2 ttl=63 time=0.070 ms
-# kubectl exec -it demo2-busybox ping 10.244.1.31 -n ns-demo2
-PING 10.244.1.31 (10.244.1.31): 56 data bytes
-64 bytes from 10.244.1.31: seq=0 ttl=63 time=0.078 ms
-64 bytes from 10.244.1.31: seq=1 ttl=63 time=0.071 ms
-64 bytes from 10.244.1.31: seq=2 ttl=63 time=0.069 ms
-
+# kubectl create -f App-B-allow3306.yml
 ```
 
-You can see in the absence of network isolation when the two different Namespace Pod can be interoperable.
-
-Now we are going to add network policy.
-
-### 5. First, modify the namespace configuration of ```ns-demo1```
-   
-```
-# kubectl annotate ns ns-demo1 "net.beta.kubernetes.io/network-policy={\"ingress\": {\"isolation\": \"DefaultDeny\"}}"
-```
-
-### 6. Lets see if this time to test whether the two pod connectivity from same namespace ```ns-demo1``` as well as different namespace ```ns-demo2``` 
+### 5. Create Web-server-deny-db-all deployment under namespace ```denydball```
 
 ```
-# kubectl exec -it demo2-busybox -n ns-demo2 -- wget --spider --timeout=1 demo1-nginx.ns-demo1                
-Connecting to demo1-nginx.ns-demo1 (10.108.133.64:80)
-wget: download timed out
-
-# kubectl exec -it demo1-busybox-without-labels -n ns-demo1 -- wget --spider --timeout=1 demo1-nginx.ns-demo1
-Connecting to demo1-nginx.ns-demo1 (10.108.133.64:80)
-wget: download timed out
-
-# kubectl exec -it demo2-busybox ping 10.244.1.31 -n ns-demo2                                                 
-PING 10.244.1.31 (10.244.1.31): 56 data bytes
-^C
---- 10.244.1.31 ping statistics ---
-6 packets transmitted, 0 packets received, 100% packet loss
-
-# kubectl exec -it demo1-busybox-without-labels ping 10.244.1.31 -n ns-demo1                                  
-PING 10.244.1.31 (10.244.1.31): 56 data bytes
-^C
---- 10.244.1.31 ping statistics ---
-7 packets transmitted, 0 packets received, 100% packet loss
-
+# kubectl create -f Web-server-deny-db-all.yml
 ```
 
-It will not work.
+### 6. Make sure all containers are running perfectly
 
-This is what we want the effect of different Namespace between the pod should not communicate, of course, this is only the most simple case, if this time ns-demo1 pod to connect ns-demo2 pod, or interoperability. Because ns-demo2 does not set Namespace annotations.
-
-Also, this time ns-demo1 will reject any pod's communication request. Because, Namespace annotations just specify the rejection of all communication requests, and does not specify when to accept other pod communication requests.
-
-### 7. Now we are going to setup network policy for pod to allow network connection. Here, we specify that only pods with user = demo1 tags can be interconnected.
+### As there was no policy implemented so form AppA, AppB & Web-Server to all (external & internal) db can connect, below URL for testing.
 
 ```
-# kubectl create -f demo1-network-policy.yml
-networkpolicy "demo1-network-policy" created
-# kubectl create -f demo1-busybox.yaml
-pod "demo1-busybox" created
+http://app-a-allow3307.cloudapps.cloud-cafe.in/connectdbout.php
+http://app-a-allow3307.cloudapps.cloud-cafe.in/connectdbout1.php
+http://app-a-allow3307.cloudapps.cloud-cafe.in/connectdbin.php
+
+http://app-b-allow3306.cloudapps.cloud-cafe.in/connectdbout.php
+http://app-b-allow3306.cloudapps.cloud-cafe.in/connectdbout1.php
+http://app-b-allow3306.cloudapps.cloud-cafe.in/connectdbin.php
+
+http://web-server.cloudapps.cloud-cafe.in/connectdbin.php
+http://web-server.cloudapps.cloud-cafe.in/connectdbout.php
+http://web-server.cloudapps.cloud-cafe.in/connectdbout1.php
 ```
 
-### 8. At this time, if I connect demo1-nginx through demo1-busybox-without-labels, you can see its connected.
+### 7. Now we are going to setup calico policy from AppA & AppB to all (external & internal) db allow/deny network connection.
 
 ```
-# kubectl exec -it demo1-busybox-without-labels -n ns-demo1 -- wget --spider --timeout=1 demo1-nginx.ns-demo1
-Connecting to demo1-nginx.ns-demo1 (10.108.133.64:80)
+kubectl exec -ti -n kube-system calicoctl -- /calicoctl apply -f - <<EOF
+- apiVersion: v1
+  kind: policy
+  metadata:
+    name: egress-allow-from-allow3306-to-external-db-3306
+  spec:
+    egress:
+    - action: allow
+      protocol: udp
+      destination:
+        selector: calico/k8s_ns == 'kube-system' && k8s-app=='kube-dns'
+        ports:
+        - 53
+    - action: allow
+      protocol: tcp
+      destination:
+        selector: calico/k8s_ns == 'test-db'
+        ports:
+        - 3306
+    - action: allow
+      protocol: tcp
+      destination:
+        net: 172.31.18.58/32
+        ports:
+        - 3306
+    order: 500
+    Selector: calico/k8s_ns == 'allow3306'
+- apiVersion: v1
+  kind: policy
+  metadata:
+    name: egress-allow-from-allow3307-to-external-db-3307
+  spec:
+    egress:
+    - action: allow
+      protocol: udp
+      destination:
+        selector: calico/k8s_ns == 'kube-system' && k8s-app=='kube-dns'
+        ports:
+        - 53
+    - action: allow
+      protocol: tcp
+      destination:
+        selector: calico/k8s_ns == 'test-db'
+        ports:
+        - 3306
+    - action: allow
+      protocol: tcp
+      destination:
+        net: 172.31.18.58/32
+        ports:
+        - 3307
+    order: 501
+    Selector: calico/k8s_ns == 'allow3307'
+EOF
+```
+
+### 8. At this time, now execute below URL, check which URL coming timout
 
 ```
-But we can not comminucate from different namespace ```ns-demo2```
+http://app-a-allow3307.cloudapps.cloud-cafe.in/connectdbout.php      -- it should work (it will connect external DB on port 3307)
+http://app-a-allow3307.cloudapps.cloud-cafe.in/connectdbout1.php     -- it should fail (it try to connect external DB on port 3306)
+http://app-a-allow3307.cloudapps.cloud-cafe.in/connectdbin.php       -- it should work (it will connect container DB)
 
-```
-# kubectl exec -it demo2-busybox -n ns-demo2 -- wget --spider --timeout=1 demo1-nginx.ns-demo1
-Connecting to demo1-nginx.ns-demo1 (10.108.133.64:80)
-wget: download timed out
+http://app-b-allow3306.cloudapps.cloud-cafe.in/connectdbout.php      -- it should fail (it try to connect external DB on port 3307)
+http://app-b-allow3306.cloudapps.cloud-cafe.in/connectdbout1.php     -- it should work (it will connect external DB on port 3306)
+http://app-b-allow3306.cloudapps.cloud-cafe.in/connectdbin.php       -- it should work (it will connect container DB)
 
-kubectl exec -it demo2-busybox ping 10.244.1.31 -n ns-demo2
-PING 10.244.1.31 (10.244.1.31): 56 data bytes
-^C
---- 10.244.1.31 ping statistics ---
-2 packets transmitted, 0 packets received, 100% packet loss
+http://web-server.cloudapps.cloud-cafe.in/connectdbin.php            -- As no policy implemented, it should work
+http://web-server.cloudapps.cloud-cafe.in/connectdbout.php           -- As no policy implemented, it should work
+http://web-server.cloudapps.cloud-cafe.in/connectdbout1.php          -- As no policy implemented, it should work
+
 ```
 
 ### 9. Now are are going to create another container in different namespace and create network policy to allow isolated namespace.
