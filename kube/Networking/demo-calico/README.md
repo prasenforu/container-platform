@@ -1,5 +1,5 @@
-# Calico policy test
-Before using Network Policy, we first verify that the pod is interoperable if it is not used. Here our test environment is this:
+# Calico Policy Demo
+Before using check any Network Policy in used. Here our test environment is this:
 
 - Namespace: ```allow3306, allow3307, denydball, test-db```
 - Deployment: ```demodb```, ```App-A-allow3307```, ```App-B-allow3306```, ```Web-server-deny-db-all```
