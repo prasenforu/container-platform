@@ -34,6 +34,10 @@ sed -i -e 's/https/http/g' prometheus-serviceMonitorKubelet.yaml
 
 ###### Step 3# Edit Grafana ```(grafana-service.yaml)```, Alertmanager ```(alertmanager-service.yaml)``` & Prometheus ```(prometheus-service.yaml)``` service files. with adding following line.
 
+``` type: LoadBalancer```
+
+Examples :
+
 ```
 apiVersion: v1
 kind: Service
