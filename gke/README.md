@@ -3,8 +3,8 @@
 #### Install
 
 ```
-gcloud config set compute/zone us-central1-f
 gcloud config set compute/region us-central1
+gcloud config set compute/zone us-central1-f
 
 gcloud container clusters create pk-kube-11174-rbac-gap --cluster-version 1.11.7-gke.4 --machine-type "custom-1-2560" --disk-type "pd-standard" --disk-size "50" --num-nodes 3 --preemptible --enable-autoscaling --min-nodes 3 --max-nodes 5 --no-enable-legacy-authorization
 ```
