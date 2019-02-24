@@ -1,1 +1,1 @@
-#### Amazon Kubernetes Setup
+#### Amazon Kubenetes Cluster (EKS) Setup
