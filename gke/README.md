@@ -65,3 +65,6 @@ cd
 kubectl create -f prometheus-operator/contrib/kube-prometheus/manifests/
 ```
 
+###### Step 5# Verify GAP
+```kubectl get pods -n monitoring```
+
