@@ -1,1 +1,1 @@
-#### Azure Kubernetes Setup
+#### Azure Kubenetes Cluster (AKS) Setup
