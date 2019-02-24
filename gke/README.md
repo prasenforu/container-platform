@@ -1,4 +1,4 @@
-### Goolge Kubenetes Cluster (GKE) Setup
+### Google Kubenetes Cluster (GKE) Setup
 
 #### Install
 
