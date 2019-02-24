@@ -25,14 +25,14 @@ kubectl create clusterrolebinding prasenforu-cluster-admin-binding --clusterrole
 
 ```git clone https://github.com/coreos/prometheus-operator.git```
 
-###### Step 2# Edit couple file in repo
+###### Step 2# Edit file (prometheus-serviceMonitorKubelet.yaml) in repo
 
 ```
 cd prometheus-operator/contrib/kube-prometheus/manifests/
 sed -i -e 's/https/http/g' prometheus-serviceMonitorKubelet.yaml
 ```
 
-Edit Grafana ```(grafana-service.yaml)```, Alertmanager ```(alertmanager-service.yaml)``` & Prometheus ```(prometheus-service.yaml)``` service files. with adding following line.
+###### Step 3# Edit Grafana ```(grafana-service.yaml)```, Alertmanager ```(alertmanager-service.yaml)``` & Prometheus ```(prometheus-service.yaml)``` service files. with adding following line.
 
 ```
 apiVersion: v1
@@ -52,5 +52,12 @@ spec:
     prometheus: k8s
   sessionAffinity: ClientIP
   type: LoadBalancer
+```
+
+###### Step 4# Now deploy yamls fille.
+
+```
+cd
+kubectl create -f prometheus-operator/contrib/kube-prometheus/manifests/
 ```
 
