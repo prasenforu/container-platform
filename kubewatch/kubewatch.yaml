@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: kube-watch
+  name: kube-watch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-watch
+  template:
+    metadata:
+      labels:
+        app: kube-watch
+    spec:
+      containers:
+      - args:
+        - run
+        - --in-cluster
+        - --url=http://webhook.site/36afd229-8064-4cea-a563-b2b295f57cd4
+        image: codefresh/kubewatch:master
+        imagePullPolicy: Always
+        name: kube-watch
