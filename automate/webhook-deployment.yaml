@@ -33,7 +33,7 @@ spec:
       serviceAccount: webhook
       serviceAccountName: webhook
       containers:
-      - image: prasenforu/kubewebhook:7.5
+      - image: XXXXXXXXXXXXXXXXXXXxx
         name: webhook-image
         ports:
         - name: webhook
