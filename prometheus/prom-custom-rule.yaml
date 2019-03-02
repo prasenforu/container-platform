@@ -1,0 +1,37 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: k8s
+    role: alert-rules
+  name: prometheus-custom-rule
+  namespace: monitoring
+spec:
+  groups:
+  - name: custom.rules
+    rules:
+    - alert: DockerDown
+      expr: up{job="node-exporter"} == 0
+      for: 30s
+      labels:
+        severity: criticalNode
+      annotations:
+        message: "Docker Service is down on {{ $labels.instance }}"
+        summary: "Docker Down"
+    - alert: OCP-Node-Down
+      expr: up {job="kubelet"} == 0
+      for: 30s
+      labels:
+        severity: criticalNode
+      annotations:
+        message: "Kubelet Service is down on {{ $labels.instance }}"
+        summary: "Kube Node Down"
+    - alert: Kube-Storage
+      expr: avg (round (heketi_device_size{job="gluster-server"} / 1.047e+6)) < (sum (round (kube_resourcequota {resource="requests.storage",type="hard"}  / 1.047e+9 )))
+      for: 30s
+      labels:
+        severity: criticalStorage
+      annotations:
+        message: "More Storage allocated in Quota than Storage"
+        summary: "Persistant Storage less space"        
+        
