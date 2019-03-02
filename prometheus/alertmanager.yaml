@@ -1,0 +1,29 @@
+global:
+  # The smarthost and SMTP sender used for mail notifications.
+  smtp_smarthost: 'smtp.gmail.com:587'
+  smtp_from: 'pkxxxxxtcs@gmail.com'
+  smtp_auth_username: 'pxxxxiletcs@gmail.com'
+  smtp_auth_password: 'password'
+  resolve_timeout: 5m
+route:
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 12h
+  receiver: email-team
+  routes:
+  - match:
+      alertname: DeadMansSwitch
+    repeat_interval: 5m
+    receiver: deadmansswitch
+  - match:
+      severity: critical
+    receiver: email-team
+receivers:
+- name: deadmansswitch
+- name: 'email-team'
+  email_configs:
+  - to: 'fkddr.prxxxxasenjit@gcgsc.com'
+    send_resolved: true
+  webhook_configs:
+  - url: "http://webhook-service.monitoring.svc.cluster.local:9000/hooks/sn-hook"
+  
