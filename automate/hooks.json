@@ -1,0 +1,82 @@
+[
+  {
+    "pass-arguments-to-command": [
+      {
+        "source": "url",
+        "name": "in1"
+      },
+      {
+        "source": "url",
+        "name": "in2"
+      },
+      {
+        "source": "payload",
+        "name": "status"
+      }
+    ],
+    "id": "autoscale-hook",
+    "execute-command": "/etc/webhook/autoscale.sh",
+    "command-working-directory": "/etc/webhook"
+  },
+  {
+    "pass-arguments-to-command": [
+      {
+        "source": "url",
+        "name": "in1"
+      },
+      {
+        "source": "url",
+        "name": "in2"
+      },
+      {
+        "source": "payload",
+        "name": "status"
+      }
+    ],
+    "id": "pod-restart-hook",
+    "execute-command": "/etc/webhook/pod-restart.sh",
+    "command-working-directory": "/etc/webhook"
+  },
+  {
+    "pass-arguments-to-command": [
+      {
+        "source": "payload",
+        "name": "alerts.0.labels.instance"
+      },
+      {
+        "source": "payload",
+        "name": "alerts.0.annotations.message"
+      },
+      {
+        "source": "payload",
+        "name": "status"
+      },
+      {
+        "source": "payload",
+        "name": "alerts.0.labels.severity"
+      }
+    ],
+    "id": "sn-hook",
+    "execute-command": "/etc/webhook/sn.sh",
+    "command-working-directory": "/etc/webhook"
+  },
+  {
+    "pass-arguments-to-command": [
+      {
+        "source": "payload",
+        "name": "alerts.0.labels.instance"
+      },
+      {
+        "source": "payload",
+        "name": "alerts.0.annotations.message"
+      },
+      {
+        "source": "payload",
+        "name": "status"
+      }
+    ],
+    "id": "ocp-node-restart-hook",
+    "execute-command": "/etc/webhook/ocp-node-restart.sh",
+    "command-working-directory": "/etc/webhook"
+  }
+]

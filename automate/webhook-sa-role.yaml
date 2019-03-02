@@ -1,0 +1,56 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: webhook
+  namespace: monitoring
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: webhook
+  namespace: monitoring
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - replicationcontrollers
+  - replicationcontrollers/scale
+  - deployments
+  - deployments/scale
+  - replicasets
+  - replicasets/scale
+  - statefulsets
+  - statefulsets/scale
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/log
+  - pods/status
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: webhook
+roleRef:
+  kind: ClusterRole
+  name: webhook
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: ServiceAccount
+  name: webhook
+  namespace: monitoring
+  

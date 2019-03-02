@@ -1,0 +1,118 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+  name: webhook-service
+  namespace: monitoring
+spec:
+  type: LoadBalancer
+  ports:
+  - name: 9000-tcp
+    port: 9000
+    protocol: TCP
+    targetPort: 9000
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: webhook
+  namespace: monitoring
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: webhook            
+    spec:
+      serviceAccount: webhook
+      serviceAccountName: webhook
+      containers:
+      - image: prasenforu/kubewebhook:7.5
+        name: webhook-image
+        ports:
+        - name: webhook
+          containerPort: 9000
+        volumeMounts:
+        - mountPath: /etc/webhook/hooks.json
+          subPath: hooks.json
+          name: webhook-hooks-volume-config
+        - mountPath: /etc/webhook/kubeconfig
+          subPath: kubeconfig
+          name: webhook-kubeconfig-volume-config
+        - mountPath: /etc/webhook/sn.sh
+          subPath: sn.sh
+          name: webhook-sn-volume-config
+        - mountPath: /etc/webhook/autoscale.sh
+          subPath: autoscale.sh
+          name: webhook-autoscale-volume-config
+        - mountPath: /etc/webhook/pod-restart.sh
+          subPath: pod-restart.sh
+          name: webhook-pod-restart-volume-config
+        - mountPath: /etc/webhook/prasen.pem
+          subPath: prasen.pem
+          name: webhook-keypem-volume-config
+        - mountPath: /etc/webhook/ocp-node-restart.sh
+          subPath: ocp-node-restart.sh
+          name: webhook-ocp-node-restart-volume-config
+        env:
+        - name: KUBEHOST
+          value: "gapk8s-9e70b3f0.hcp.southindia.azmk8s.io"
+        - name: KUBEPORT
+          value: "443"
+        - name: KUBEUSER
+          value: "admin"
+        - name: KUBEPASS
+          value: "redhat"
+        - name: KUBETOKEN
+          value: "T O K E N"
+        - name: KUBECONFIG
+          value: "/etc/webhook/kubeconfig"
+        - name: SNURL
+          value: "dev18981.service-now.com"
+        - name: SNUSER
+          value: "admin"
+        - name: SNPASS
+          value: "UIxEq98xpXsQ"
+        - name: SNCALLID
+          value: "containeradmin"
+        - name: SNPRIORITY
+          value: "1"
+        - name: SNCATAGORY
+          value: "Software"
+        - name: SNASSINGRP
+          value: "Container"
+        - name: SNASSINTO
+          value: ""
+        - name: SNINCID
+          value: "ServiceNow Incident ID"
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: webhook-hooks-configmap
+        name: webhook-hooks-volume-config
+      - configMap:
+          defaultMode: 420
+          name: webhook-kubeconfig-configmap
+        name: webhook-kubeconfig-volume-config
+      - configMap:
+          defaultMode: 493
+          name: webhook-sn-configmap
+        name: webhook-sn-volume-config
+      - configMap:
+          defaultMode: 493
+          name: webhook-autoscale-configmap
+        name: webhook-autoscale-volume-config
+      - configMap:
+          defaultMode: 493
+          name: webhook-pod-restart-configmap
+        name: webhook-pod-restart-volume-config
+      - configMap:
+          defaultMode: 420
+          name: webhook-keypem-configmap
+        name: webhook-keypem-volume-config
+      - configMap:
+          defaultMode: 493
+          name: webhook-ocp-node-restart-configmap
+        name: webhook-ocp-node-restart-volume-config
+
