@@ -1,0 +1,50 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubewatch
+data:
+  .kubewatch.yaml: |
+    namespace: ""
+    handler:
+      webhook:
+        url: "http://webhook.site/df70df85-447e-4163-bfa3-0ae4a1cdd0e9"
+    resource:
+      deployment: true
+      replicationcontroller: true
+      replicaset: true
+      daemonset: true
+      services: true
+      pod: true
+      secret: true
+      configmap: true
+      job: true
+      persistentvolume: true
+      namespace: true
+      ingress: true
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kubewatch
+  namespace: default
+spec:
+  containers:
+  - image: tuna/kubewatch:v0.0.1
+    imagePullPolicy: Always
+    name: kubewatch
+    volumeMounts:
+    - name: config-volume
+      mountPath: /root
+  - image: gcr.io/skippbox/kubectl:v1.3.0
+    args:
+      - proxy
+      - "-p"
+      - "8080"
+    name: proxy
+    imagePullPolicy: Always
+  restartPolicy: Always
+  volumes:
+  - name: config-volume
+    configMap:
+      name: kubewatch
