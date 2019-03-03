@@ -65,6 +65,97 @@ spec:
   selector:
     app: rabbitmqsrv
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mq-receive-config
+  namespace: demomsg
+data:
+  receive.py: |
+    #!/usr/bin/env python
+    # receive.py
+
+    import pika
+
+    credentials = pika.PlainCredentials('rabbitmq', 'znwk2BaTLAqowMrv')
+    parameters = pika.ConnectionParameters('rabbitmqsrv.demomsg.svc.cluster.local',
+                                   5672,
+                                   '/',
+                                   credentials)
+
+    connection = pika.BlockingConnection(parameters)
+    channel = connection.channel()
+    method_frame, header_frame, body = channel.basic_get('hello')
+    if method_frame:
+        print('Received message', body)
+        channel.basic_ack(method_frame.delivery_tag)
+    else:
+        print('No message available')
+
+    connection.close()
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mq-receiveall-config
+  namespace: demomsg
+data:
+  receiveall.py: |
+    #!/usr/bin/env python
+    # receiveall.py
+
+    import pika
+
+    credentials = pika.PlainCredentials('rabbitmq', 'znwk2BaTLAqowMrv')
+    parameters = pika.ConnectionParameters('rabbitmqsrv.demomsg.svc.cluster.local',
+                                   5672,
+                                   '/',
+                                   credentials)
+
+    connection = pika.BlockingConnection(parameters)
+    channel = connection.channel()
+
+    channel.queue_declare(queue='hello')
+
+    def callback(ch, method, properties, body):
+        print(" [x] Received %r" % body)
+
+    channel.basic_consume(callback,
+                      queue='hello',
+                      no_ack=True)
+
+    connection.close()
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mq-send-config
+  namespace: demomsg
+data:
+  send.py: |
+    #!/usr/bin/env python
+    # send.py
+
+    import pika
+
+    credentials = pika.PlainCredentials('rabbitmq', 'znwk2BaTLAqowMrv')
+    parameters = pika.ConnectionParameters('rabbitmqsrv.demomsg.svc.cluster.local',
+                                   5672,
+                                   '/',
+                                   credentials)
+
+    connection = pika.BlockingConnection(parameters)
+
+    channel = connection.channel()
+
+    channel.queue_declare(queue='hello')
+
+    channel.basic_publish(exchange='',
+                  routing_key='hello',
+                  body='Hello W0rld!')
+    print(" [x] Sent 'Hello World!'")
+    connection.close()
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -85,6 +176,29 @@ spec:
         image: prasenforu/mqclient:2.0
         ports:
         - containerPort: 9000
+        volumeMounts:
+        - mountPath: /etc/webhook/receive.py
+          subPath: receive.py
+          name: mq-receive-volume-config
+        - mountPath: /etc/webhook/receiveall.py
+          subPath: receiveall.py
+          name: mq-receiveall-volume-config
+        - mountPath: /etc/webhook/send.py
+          subPath: send.py
+          name: mq-send-volume-config
+      volumes:
+      - configMap:
+          defaultMode: 493
+          name: mq-receive-config
+        name: mq-receive-volume-config
+      - configMap:
+          defaultMode: 493
+          name: mq-receiveall-config
+        name: mq-receiveall-volume-config
+      - configMap:
+          defaultMode: 493
+          name: mq-send-config
+        name: mq-send-volume-config
 ---
 apiVersion: v1
 kind: Service
