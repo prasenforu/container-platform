@@ -90,7 +90,7 @@ Looks like token just had expired and kubelet not able to join in cluster.
 
 Check the log (/var/log/messages) in ```Not ready``` host and search for test similar like ```cannot create certificate signing request: Unauthorized.``` 
 
-#### Step #2 Get the token from Master
+#### Step #2 Get the token from ```Master```
 
 ```kubeadm token list``` 
 
@@ -102,6 +102,6 @@ Check the log (/var/log/messages) in ```Not ready``` host and search for test si
 
 ```kubeadm join --skip-preflight-checks --token <TOKEN> --discovery-token-ca-cert-hash sha256:<HASH> <master> or <VIP for HA Master>:6443```
 
-#### Step #5 Check node status from Master
+#### Step #5 Check node status from ```Master```
 
 ```kubeadm get nodes```
