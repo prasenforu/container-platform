@@ -86,7 +86,7 @@ Looks like token just had expired and kubelet not able to join in cluster.
 
 ##### Resolution
 
-#### Step #1 Log check
+#### Step #1 Log check from ```Not ready``` host
 
 Check the log (/var/log/messages) in ```Not ready``` host and search for test similar like ```cannot create certificate signing request: Unauthorized.``` 
 
