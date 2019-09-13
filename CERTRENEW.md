@@ -78,3 +78,30 @@ Reboot the Kubernetes master node.
 
 ### Note: If its HA cluster (3 Master) do same above steps for rest of all master servers.
 
+### Issue & troubleshoot
+
+##### Error - "failed to run Kubelet: cannot create certificate signing request: Unauthorized"
+
+Looks like token just had expired and kubelet not able to join in cluster.
+
+##### Resolution
+
+#### Step #1 Log check
+
+Check the log (/var/log/messages) in ```Not ready``` host and search for test similar like ```cannot create certificate signing request: Unauthorized.``` 
+
+#### Step #2 Get the token from Master
+
+```kubeadm token list``` 
+
+#### Step #3 Get the hash from ```Not ready``` host
+
+```openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'``` 
+
+#### Step #4 Join in cluster from ```Not ready``` host
+
+```kubeadm join --skip-preflight-checks --token <TOKEN> --discovery-token-ca-cert-hash sha256:<HASH> <master> or <VIP for HA Master>:6443```
+
+#### Step #5 Check node status from Master
+
+```kubeadm get nodes```
