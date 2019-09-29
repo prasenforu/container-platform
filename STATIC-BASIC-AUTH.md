@@ -142,4 +142,34 @@ roleRef:
 
 #### Step #6 Verify using login in  ```Kubernetes-dashoboard```
 
+## Certificate based Authentication
+
+- Create a private key for your user. In this example, we will name the file devuser.key (devuser is user)
+
+```openssl genrsa -out devuser.key 2048```
+
+- Create a certificate sign request devuser.csr using the private key you just created (devuser.key in this example). 
+Make sure you specify your username and group in the -subj section (CN is for the username and O for the group). 
+As previously mentioned, we will use devuser as the name and devgroup as the group:
+
+```openssl req -new -key devuser.key -out devuser.csr -subj "/CN=devuser/O=devgroup"```
+
+Locate your Kubernetes cluster certificate authority (CA). 
+This will be responsible for approving the request and generating the necessary certificate to access the cluster API. 
+Its location is normally /etc/kubernetes/pki/. 
+
+- Generate the final certificate devuser.crt by approving the certificate sign request, devuser.csr, you made earlier. 
+Make sure you substitute the CA_LOCATION placeholder with the location of your cluster CA. In this example, the certificate will be valid for 500 days:
+
+```openssl x509 -req -in devuser.csr -CA CA_LOCATION/ca.crt -CAkey CA_LOCATION/ca.key -CAcreateserial -out devuser.crt -days 500```
+
+- Save both devuser.crt and devuser.key in a safe location (in this example we will use /home/devuser/.certs/).
+
+- Add a new context with the new credentials for your Kubernetes cluster. This example is for a Minikube cluster but it should be similar for others:
+
+```
+kubectl config set-credentials devuser --client-certificate=/home/devuser/.certs/devuser.crt  --client-key=/home/devuser/.certs/devuser.key
+kubectl config set-context devuser-context --cluster=kube-cluster --namespace=default --user=devuser
+```
+
 ###### https://www.youtube.com/watch?v=Izi1dOQD5m8
