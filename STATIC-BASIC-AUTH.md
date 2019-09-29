@@ -1,4 +1,4 @@
-# Kubernetes basic authentication using CSV file
+# Kubernetes authentication & authorization
 
 Authentication and authorization are two very important requirements when setting up a Kubernetes cluster. The basic authentication and authorization flow in a Kubernetes cluster can be understood from the following figure:
 
