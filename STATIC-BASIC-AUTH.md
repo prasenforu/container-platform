@@ -21,11 +21,11 @@ Make sure take a backup of api server pod yaml file
 
 Add below content in /etc/kubernetes/manifests/kube-apiserver.yaml file
 
-in ```command``` section
+- in ```command``` section
 
 ```- --basic-auth-file=/etc/kubernetes/auth.csv```
 
-in ```volumeMounts``` section
+- in ```volumeMounts``` section
 
 ```
     volumeMounts:
@@ -34,7 +34,7 @@ in ```volumeMounts``` section
       readOnly: true
 ```
 
-in ```volumes``` section
+- in ```volumes``` section
 
 ```
   volumes:
