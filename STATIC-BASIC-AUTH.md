@@ -154,9 +154,7 @@ As previously mentioned, we will use devuser as the name and devgroup as the gro
 
 ```openssl req -new -key devuser.key -out devuser.csr -subj "/CN=devuser/O=devgroup"```
 
-Locate your Kubernetes cluster certificate authority (CA). 
-This will be responsible for approving the request and generating the necessary certificate to access the cluster API. 
-Its location is normally /etc/kubernetes/pki/. 
+Locate your Kubernetes cluster certificate authority (CA). This will be responsible for approving the request and generating the necessary certificate to access the cluster API. Its location is normally /etc/kubernetes/pki/. 
 
 - Generate the final certificate devuser.crt by approving the certificate sign request, devuser.csr, you made earlier. 
 Make sure you substitute the CA_LOCATION placeholder with the location of your cluster CA. In this example, the certificate will be valid for 500 days:
@@ -171,5 +169,10 @@ Make sure you substitute the CA_LOCATION placeholder with the location of your c
 kubectl config set-credentials devuser --client-certificate=/home/devuser/.certs/devuser.crt  --client-key=/home/devuser/.certs/devuser.key
 kubectl config set-context devuser-context --cluster=kube-cluster --namespace=default --user=devuser
 ```
+
+### Note: If we are using TOKEN based authentication we should NOT use step #5 (- --authentication-mode=basic)
+
+
+
 
 ###### https://www.youtube.com/watch?v=Izi1dOQD5m8
