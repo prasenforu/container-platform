@@ -10,6 +10,24 @@ Authentication and authorization are two very important requirements when settin
 -------------------------------------------------------------------------------------------
 ```
 
+There are following popular authentication methods available in Kubernetes ...
+
+- Client Certificate Authentication
+- Token based Authentication
+- HTTP Basic Authentication
+- Open ID
+
+And Kubernetes supports following types of authorization method ..
+
+- AlwaysDeny (This policy denies all the requests)
+- AlwaysAllow (This policy allows all the requests)
+- Node (a special-purpose authorization mode that specifically authorizes API requests made by kubelets)
+- Attribute Based Access Control (ABAC - allows to configure policies using local files)
+- Role Based Access Control (RBAC - allows to create and store policies using the Kubernetes API)
+- Webhook (HTTP callback mode allows to manage authorization using a remote REST endpoint)
+
+## HTTP Basic Authentication
+
 #### Step #1 Create User & Password CSV file
 Make sure content should be below format
 
