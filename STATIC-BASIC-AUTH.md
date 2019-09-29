@@ -1,4 +1,4 @@
-# Kubernetes static basic authentication using CSV file
+# Kubernetes basic authentication using CSV file
 
 
 #### Step #1 Create User & Password CSV file
