@@ -42,3 +42,50 @@ in ```volumes``` section
       path: /etc/kubernetes/auth.csv
     name: kubernetes-dashboard
 ```
+
+#### Step #3 Check API server pod UP & running
+
+```kubectl get pod -n kube-system```
+
+#### Step #4 Create following role/rolebindings/clusterrolebindings
+
+vi test.yaml
+
+```
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  namespace: default
+  name: user-read-view
+rules:
+- apiGroups: ["", "extensions", "apps"]
+  resources: ["deployments", "replicationcontrollers", "replicationcontrollers/status", "replicasets", "pods", "pods/log", "pods/status", "services", "events"]
+  verbs: ["get", "list", "watch"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: user-read-view-binding
+  namespace: default
+subjects:
+- kind: User
+  name: devuser
+  apiGroup: ""
+roleRef:
+  kind: Role
+  name: user-read-view
+  apiGroup: ""
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+subjects:
+- kind: User
+  name: ltadmin
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin 
+  apiGroup: rbac.authorization.k8s.io
+```
