@@ -111,7 +111,6 @@ roleRef:
 
 ```
 - --authentication-mode=basic
-Make sure content should be below format
 ```
 
 #### Step #6 Verify using login in  ```Kubernetes-dashoboard```
