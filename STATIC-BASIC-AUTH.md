@@ -161,7 +161,12 @@ Make sure you substitute the CA_LOCATION placeholder with the location of your c
 
 ```openssl x509 -req -in devuser.csr -CA CA_LOCATION/ca.crt -CAkey CA_LOCATION/ca.key -CAcreateserial -out devuser.crt -days 500```
 
-- Save both devuser.crt and devuser.key in a safe location (in this example we will use /home/devuser/.certs/).
+- Save both devuser.crt and devuser.key in a safe location (in this example we will use /home/devuser/.certs/)
+
+```
+cp devuser.crt /home/devuser/.certs/
+cp devuser.key /home/devuser/.certs/
+```
 
 - Add a new context with the new credentials for your Kubernetes cluster. This example is for a Minikube cluster but it should be similar for others:
 
