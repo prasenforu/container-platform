@@ -170,9 +170,8 @@ kubectl config set-credentials devuser --client-certificate=/home/devuser/.certs
 kubectl config set-context devuser-context --cluster=kube-cluster --namespace=default --user=devuser
 ```
 
-### Note: If we are using TOKEN based authentication we should NOT use step #5 (- --authentication-mode=basic)
+### Note: If we are using TOKEN based authentication we should NOT use step #5 
 
-
-
+```- --authentication-mode=basic```
 
 ###### https://www.youtube.com/watch?v=Izi1dOQD5m8
