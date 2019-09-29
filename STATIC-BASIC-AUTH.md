@@ -89,3 +89,30 @@ roleRef:
   name: cluster-admin 
   apiGroup: rbac.authorization.k8s.io
 ```
+
+#### Step #5 Download, update & deploy ```Kubernetes-dashoboard```
+
+##### Download 
+
+```wget https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml```
+
+##### Edit
+
+```vi kubernetes-dashboard.yaml```
+
+- add following in ```service``` section above file (kubernetes-dashboard.yaml)
+
+```
+      nodePort: 32000
+  type: NodePort
+```  
+
+- add following in ```deployment``` section above file (kubernetes-dashboard.yaml)
+
+```
+- --authentication-mode=basic
+Make sure content should be below format
+```
+
+#### Step #6 Verify using login in  ```Kubernetes-dashoboard```
+
