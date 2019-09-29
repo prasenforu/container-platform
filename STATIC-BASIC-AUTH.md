@@ -47,9 +47,9 @@ Add below content in /etc/kubernetes/manifests/kube-apiserver.yaml file
 
 ```kubectl get pod -n kube-system```
 
-#### Step #4 Create following role/rolebindings/clusterrolebindings
+#### Step #4 Create following role/rolebindings/clusterrolebindings file
 
-vi test.yaml
+```vi test.yaml```
 
 ```
 kind: Role
