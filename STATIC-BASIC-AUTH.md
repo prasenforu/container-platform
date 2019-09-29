@@ -168,7 +168,7 @@ cp devuser.crt /home/devuser/.certs/
 cp devuser.key /home/devuser/.certs/
 ```
 
-- Add a new context with the new credentials for your Kubernetes cluster. This example is for a Minikube cluster but it should be similar for others:
+- Add a new context with the new credentials for your Kubernetes cluster. 
 
 ```
 kubectl config set-credentials devuser --client-certificate=/home/devuser/.certs/devuser.crt  --client-key=/home/devuser/.certs/devuser.key
