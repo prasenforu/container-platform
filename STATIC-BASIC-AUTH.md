@@ -1,6 +1,11 @@
 # Kubernetes basic authentication using CSV file
 
-
+Authentication and authorization are two very important requirements when setting up a Kubernetes cluster. The basic authentication and authorization flow in a Kubernetes cluster can be understood from the following figure:
+-------------------------------------------------------------------------------------------
+| Kube Client  =>   API-SERVER    => Auth-Policy =>   Admission Control   => Allow Access |
+|  (kubectl)     (https://IP:6443)     (RBAC)       (Cluster wide Policy)                 |
+|                 Authentication     Authorization                                        |
+-------------------------------------------------------------------------------------------
 #### Step #1 Create User & Password CSV file
 Make sure content should be below format
 
