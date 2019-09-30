@@ -5,7 +5,7 @@ Authentication and authorization are two very important requirements when settin
 ```
 -------------------------------------------------------------------------------------------
 | Kube Client  =>   API-SERVER    => Auth-Policy =>   Admission Control   => Allow Access |
-|  (kubectl)     (https://IP:6443)     (RBAC)          (Policy Checker)                   |
+|  (kubectl)     (https://IP:6443)     (RBAC)       (Policy Valification)                 |
 |                 Authentication     Authorization                                        |
 -------------------------------------------------------------------------------------------
 ```
