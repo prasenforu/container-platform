@@ -142,6 +142,38 @@ roleRef:
 
 #### Step #6 Verify using login in  ```Kubernetes-dashoboard```
 
+- Login with admin user (ltadmin)
+- Create an app using image "mongo:latest"
+- Verify its running
+- Logout
+
+Switch to deffierent user (devuser)
+
+- Login with admin user (devuser)
+- Verify PODs are running
+- Try to delete POD
+- Logout
+
+"CREATE FROM TEXT INPUT"  use following..
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mongo
+  labels:
+    name: mongo
+    context: docker-chat
+spec:
+  containers:
+    -
+      name: mongo
+      image: mongo:latest
+      ports:
+        -
+          containerPort: 27017
+```
+
 ## Certificate based Authentication
 
 - Create a private key for your user. In this example, we will name the file devuser.key (devuser is user)
